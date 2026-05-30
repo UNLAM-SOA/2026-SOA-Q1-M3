@@ -12,7 +12,7 @@
     <string name="btn_nav_sensor">VER SENSOR DE MOVIMIENTO -></string>
 
     <string name="title_sensor">Sensor de Movimiento</string>
-    <string name="instruccion_shake">Agitá el dispositivo para activar la alarma</string>
+    <string name="instruccion_shake">Agitá el dispositivo para desactivar la alarma</string>
     <string name="estado_reposo">Estado: En reposo</string>
     <string name="btn_monitoreo">ACTIVAR MONITOREO</string>
     <string name="desc_cold_logo">Cold Logo</string>
