@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">ThermoGuard</string>
+    <string name="title_mqtt">Configuración MQTT</string>
+    <string name="hint_broker">Broker URL</string>
+    <string name="default_broker">broker.hivemq.com</string>
+    <string name="hint_port">Puerto</string>
+    <string name="default_port">1883</string>
+    <string name="btn_conectar">CONECTAR</string>
+    <string name="title_temp">Control de Temperatura</string>
+    <string name="hint_temp">Temperatura objetivo (°C)</string>
+    <string name="btn_enviar">ENVIAR AL SISTEMA</string>
+    <string name="btn_nav_sensor">VER SENSOR DE MOVIMIENTO -></string>
+
+    <string name="title_sensor">Sensor de Movimiento</string>
+    <string name="instruccion_shake">Agitá el dispositivo para activar la alarma</string>
+    <string name="estado_reposo">Estado: En reposo</string>
+    <string name="btn_monitoreo">ACTIVAR MONITOREO</string>
+    <string name="desc_cold_logo">Cold Logo</string>
+    <string name="desc_motion_icon">Motion Icon</string>
+</resources>
