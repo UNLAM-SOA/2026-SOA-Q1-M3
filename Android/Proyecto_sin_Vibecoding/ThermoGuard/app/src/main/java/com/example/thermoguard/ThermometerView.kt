@@ -65,9 +65,6 @@ class ThermometerView @JvmOverloads constructor(
 
     init {
         if (isInEditMode) { temperature = 22f; displayed = 22f }
-        // sombra suave en la perilla (toque "premium")
-        knobPaint.setShadowLayer(10f, 0f, 3f, Color.argb(120, 0, 0, 0))
-        setLayerType(LAYER_TYPE_SOFTWARE, null) // necesario para shadowLayer
     }
 
     private fun ratioOf(t: Float) = (t - minTemp) / (maxTemp - minTemp)
@@ -119,9 +116,12 @@ class ThermometerView @JvmOverloads constructor(
         val mRight = right - inset
         val mW = mRight - mLeft
 
-        val mercRect = RectF(mLeft, mercTop, mRight, tubeBottom)
-        canvas.drawRoundRect(mercRect, mW / 2, mW / 2, mercuryPaint)
-        canvas.drawRect(mLeft, tubeBottom - mW, mRight, tubeBottom, mercuryPaint)
+        // Columna de mercurio (solo si hay algo que mostrar)
+        if (mercTop < tubeBottom - mW / 2) {
+            val mercRect = RectF(mLeft, mercTop, mRight, tubeBottom)
+            canvas.drawRoundRect(mercRect, mW / 2, mW / 2, mercuryPaint)
+        }
+        // Bulbo siempre lleno (es el "depósito")
         canvas.drawCircle(cx, bulbCy, bulbR * 0.80f, mercuryPaint)
 
         // Reflejo de vidrio (sutil)

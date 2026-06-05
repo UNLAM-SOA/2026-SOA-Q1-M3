@@ -2,6 +2,7 @@ package com.example.thermoguard
 
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import java.util.Locale
@@ -12,6 +13,7 @@ class ThermometerActivity : AppCompatActivity() {
     private lateinit var tvTemperature: TextView
     private lateinit var tvMode: TextView
     private lateinit var btnBack: MaterialButton
+    private lateinit var btnEnviar: MaterialButton
     private lateinit var btnBajo: MaterialButton
     private lateinit var btnMedio: MaterialButton
     private lateinit var btnAlto: MaterialButton
@@ -24,6 +26,7 @@ class ThermometerActivity : AppCompatActivity() {
         tvTemperature   = findViewById(R.id.tvTemperature)
         tvMode          = findViewById(R.id.tvMode)
         btnBack         = findViewById(R.id.btnBack)
+        btnEnviar       = findViewById(R.id.btnEnviar)
         btnBajo         = findViewById(R.id.btnBajo)
         btnMedio        = findViewById(R.id.btnMedio)
         btnAlto         = findViewById(R.id.btnAlto)
@@ -31,7 +34,7 @@ class ThermometerActivity : AppCompatActivity() {
         // Actualiza lectura + modo + color en cada cambio (incluye la animación)
         thermometerView.onTemperatureChangeListener = { temp ->
             val color = thermometerView.currentColor()
-            tvTemperature.text = String.format(Locale.getDefault(), getString(R.string.temp_format), temp)
+            tvTemperature.text = String.format(Locale.getDefault(), "%.1f°C", temp)
             tvTemperature.setTextColor(color)
             tvMode.text = modoPara(temp)
             tvMode.setTextColor(color)
@@ -47,6 +50,17 @@ class ThermometerActivity : AppCompatActivity() {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
+        btnEnviar.setOnClickListener {
+            val temp = thermometerView.getTemperature()
+            val modo = modoPara(temp)
+            // TODO Parte 2: publicar por MQTT (temp + modo)
+            Toast.makeText(
+                this,
+                "Enviado: ${String.format(Locale.getDefault(), "%.1f°C", temp)}  •  $modo",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
         // Animación de entrada (se llena desde 0)
         thermometerView.post { thermometerView.playIntro(22f) }
     }
@@ -55,9 +69,9 @@ class ThermometerActivity : AppCompatActivity() {
         val r = (temp - thermometerView.minTemp) /
                 (thermometerView.maxTemp - thermometerView.minTemp)
         return when {
-            r < 0.33f -> getString(R.string.mode_bajo)
-            r < 0.66f -> getString(R.string.mode_medio)
-            else      -> getString(R.string.mode_alto)
+            r < 0.33f -> "MODO BAJO"
+            r < 0.66f -> "MODO MEDIO"
+            else      -> "MODO ALTO"
         }
     }
 
