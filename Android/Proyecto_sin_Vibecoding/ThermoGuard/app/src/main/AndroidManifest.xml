@@ -25,6 +25,10 @@
             android:name=".SensorActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ThermometerActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -9,7 +9,7 @@
     <string name="title_temp">Control de Temperatura</string>
     <string name="hint_temp">Temperatura objetivo (°C)</string>
     <string name="btn_enviar">ENVIAR AL SISTEMA</string>
-    <string name="btn_nav_sensor">VER SENSOR DE MOVIMIENTO -></string>
+    <string name="btn_nav_sensor">VER SENSOR DE MOVIMIENTO</string>
 
     <string name="title_sensor">Sensor de Movimiento</string>
     <string name="instruccion_shake">Agitá el dispositivo para desactivar la alarma</string>
@@ -17,4 +17,16 @@
     <string name="btn_monitoreo">ACTIVAR MONITOREO</string>
     <string name="desc_cold_logo">Cold Logo</string>
     <string name="desc_motion_icon">Motion Icon</string>
+    <string name="btn_ir_termometro">VER TERMÓMETRO</string>
+    <string name="title_thermometer">Termómetro Profesional</string>
+    <string name="btn_volver">VOLVER</string>
+    <string name="btn_volver_icon">Volver</string>
+    <string name="default_temp">0.0°C</string>
+    <string name="mode_medio">MODO MEDIO</string>
+    <string name="preset_bajo">BAJO</string>
+    <string name="preset_medio">MEDIO</string>
+    <string name="preset_alto">ALTO</string>
+    <string name="mode_bajo">MODO BAJO</string>
+    <string name="mode_alto">MODO ALTO</string>
+    <string name="temp_format">%.1f°C</string>
 </resources>
