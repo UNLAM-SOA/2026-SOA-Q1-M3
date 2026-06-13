@@ -30,3 +30,10 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Node-Red
+Node-red/.env
+Node-red/node-red/data/node_modules/
+Node-red/node-red/data/.config.*
+Node-red/mosquitto/data/
+Node-red/mosquitto/log/
