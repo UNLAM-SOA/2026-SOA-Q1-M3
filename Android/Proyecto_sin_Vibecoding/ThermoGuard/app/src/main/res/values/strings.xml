@@ -54,6 +54,11 @@
     <string name="error_not_connected">No estás conectado al MQTT</string>
     <string name="toast_modo_enviado">Modo enviado: %s</string>
 
+    <string name="sensor_no_acelerometro">Este dispositivo no tiene acelerómetro</string>
+    <string name="sensor_agitacion_detectada">¡Agitación detectada!</string>
+    <string name="sensor_alarma_apagada">Alarma apagada</string>
+    <string name="error_no_mqtt">No estás conectado al MQTT</string>
+
     <string name="label_frio">FRÍO</string>
     <string name="label_caliente">CALIENTE</string>
     <string name="mode_format">MODO %s</string>

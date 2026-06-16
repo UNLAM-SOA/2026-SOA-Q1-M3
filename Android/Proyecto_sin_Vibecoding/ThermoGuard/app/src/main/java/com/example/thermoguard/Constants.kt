@@ -8,6 +8,7 @@ object Constants {
     const val TOPIC_SET_MODO = "grupoM3/set/modo"
     const val TOPIC_SENSOR_TEMP = "grupoM3/sensor/temperatura"
     const val TOPIC_SENSOR_ESTADO = "grupoM3/sensor/estado"
+    const val TOPIC_COMANDO_ALARMA = "grupoM3/comando/alarma"
 
     // Temperature Ranges
     const val FRIO_MIN = 0f
