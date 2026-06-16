@@ -10,13 +10,13 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import androidx.core.content.ContextCompat
 
 /**
  * Termómetro interactivo con RANGO acotado por modo.
  *
  *  • La escala visual siempre es minTemp..maxTemp (0..50).
  *  • El usuario solo puede moverse dentro de [rangeMin, rangeMax] (el modo activo).
- *  • setMode() fija el rango, el color y anima hasta el valor inicial (el medio del rango).
  */
 class ThermometerView @JvmOverloads constructor(
     context: Context,
@@ -28,36 +28,38 @@ class ThermometerView @JvmOverloads constructor(
     val minTemp = 0f
     val maxTemp = 50f
 
-    // Rango permitido del modo activo (por defecto, todo)
+    // Rango permitido del modo activo
     private var rangeMin = 0f
     private var rangeMax = 50f
 
     private var temperature = 25f
     private var displayed = 25f
 
-    private var accentColor = Color.parseColor("#4FC3F7")
+    private var accentColor = ContextCompat.getColor(context, R.color.thermometer_frio)
 
     private var animator: ValueAnimator? = null
 
-    /** Se dispara SIEMPRE (animación o gesto). Sirve para refrescar la UI. */
+    /** Se dispara SIEMPRE (animación o gesto). */
     var onTemperatureChangeListener: ((Float) -> Unit)? = null
 
     /** Se dispara SOLO cuando el usuario arrastra con el dedo. */
     var onUserDragListener: ((Float) -> Unit)? = null
 
     private val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1B2530")
+        color = ContextCompat.getColor(context, R.color.thermometer_track)
     }
-    private val bandPaint = Paint(Paint.ANTI_ALIAS_FLAG)            // zona permitida
+    private val bandPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val mercuryPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val glassPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.argb(28, 255, 255, 255)
     }
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#33404D"); strokeWidth = 3f
+        color = ContextCompat.getColor(context, R.color.thermometer_tick)
+        strokeWidth = 3f
     }
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#5B6B79"); textAlign = Paint.Align.LEFT
+        color = ContextCompat.getColor(context, R.color.thermometer_label)
+        textAlign = Paint.Align.LEFT
     }
     private val knobPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
     private val knobRingPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -70,14 +72,10 @@ class ThermometerView @JvmOverloads constructor(
 
     private fun ratioOf(t: Float) = (t - minTemp) / (maxTemp - minTemp)
 
-    /** Color actual (el del modo activo). */
     fun currentColor(): Int = accentColor
 
     fun getTemperature(): Float = temperature
 
-    /**
-     * Configura un modo: acota el rango, fija el color y anima al valor inicial.
-     */
     fun setMode(min: Float, max: Float, initial: Float, color: Int, animate: Boolean = true) {
         rangeMin = min
         rangeMax = max
@@ -86,7 +84,7 @@ class ThermometerView @JvmOverloads constructor(
     }
 
     fun setTemperature(temp: Float, animate: Boolean = true) {
-        val target = temp.coerceIn(rangeMin, rangeMax)   // ← clamp al rango del modo
+        val target = temp.coerceIn(rangeMin, rangeMax)
         temperature = target
         if (!animate) {
             displayed = target
@@ -107,14 +105,12 @@ class ThermometerView @JvmOverloads constructor(
         }
     }
 
-    /** Animación de entrada: llena desde rangeMin hasta el valor actual. */
     fun playIntro(to: Float = temperature) {
         displayed = rangeMin
         invalidate()
         post { setTemperature(to, animate = true) }
     }
 
-    // geometría compartida draw/touch
     private var tubeTop = 0f
     private var tubeBottom = 0f
 
@@ -135,18 +131,18 @@ class ThermometerView @JvmOverloads constructor(
         val right = cx + tubeW / 2
         val usable = tubeBottom - tubeTop
 
-        // Riel + bulbo de fondo
+        // Riel
         val track = RectF(left, tubeTop - tubeW / 2, right, tubeBottom)
         canvas.drawRoundRect(track, tubeW / 2, tubeW / 2, trackPaint)
         canvas.drawCircle(cx, bulbCy, bulbR, trackPaint)
 
-        // Zona permitida (banda del modo activo), tenue
-        bandPaint.color = (accentColor and 0x00FFFFFF) or 0x33000000   // ~20% alpha
+        // Zona permitida
+        bandPaint.color = (accentColor and 0x00FFFFFF) or 0x33000000
         val yBandTop = tubeBottom - ratioOf(rangeMax) * usable
         val yBandBot = tubeBottom - ratioOf(rangeMin) * usable
         canvas.drawRoundRect(RectF(left, yBandTop, right, yBandBot), tubeW / 2, tubeW / 2, bandPaint)
 
-        // Mercurio (color del modo)
+        // Mercurio
         mercuryPaint.color = accentColor
         val mercTop = tubeBottom - ratioOf(displayed) * usable
         val inset = tubeW * 0.20f
@@ -158,11 +154,11 @@ class ThermometerView @JvmOverloads constructor(
         }
         canvas.drawCircle(cx, bulbCy, bulbR * 0.80f, mercuryPaint)
 
-        // Reflejo de vidrio
+        // Reflejo
         val glass = RectF(left + tubeW * 0.20f, tubeTop, left + tubeW * 0.36f, tubeBottom - tubeW)
         canvas.drawRoundRect(glass, tubeW * 0.1f, tubeW * 0.1f, glassPaint)
 
-        // Escala cada 10°
+        // Escala
         labelPaint.textSize = h * 0.030f
         var t = minTemp.toInt()
         while (t <= maxTemp.toInt()) {
@@ -188,7 +184,6 @@ class ThermometerView @JvmOverloads constructor(
                 val r = (tubeBottom - y) / usable
                 val rawTemp = minTemp + r * (maxTemp - minTemp)
                 animator?.cancel()
-                // ← clamp al rango del modo: no baja del min ni sube del max
                 temperature = rawTemp.coerceIn(rangeMin, rangeMax)
                 displayed = temperature
                 onTemperatureChangeListener?.invoke(displayed)

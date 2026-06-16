@@ -2,13 +2,23 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="dark_bg">#121212</color>
-    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_bg">#0E1116</color>
+    <color name="dark_surface">#161B22</color>
     <color name="ice_blue">#81D4FA</color>
     <color name="ice_blue_dark">#0288D1</color>
     <color name="accent_blue">#00BCD4</color>
     <color name="gray_text">#B0B0B0</color>
-    <color name="thermometer_red">#F44336</color>
-    <color name="thermometer_mercury">#D32F2F</color>
-    <color name="thermometer_tube">#E0E0E0</color>
+
+    <!-- Thermometer UI -->
+    <color name="thermometer_track">#1B2530</color>
+    <color name="thermometer_tick">#33404D</color>
+    <color name="thermometer_label">#5B6B79</color>
+    <color name="thermometer_frio">#4FC3F7</color>
+    <color name="thermometer_medio">#66BB6A</color>
+    <color name="thermometer_caliente">#EF5350</color>
+
+    <color name="text_primary">#ECEFF1</color>
+    <color name="text_secondary">#90A4AE</color>
+    <color name="text_tertiary">#546E7A</color>
+    <color name="accent_yellow">#FFCA28</color>
 </resources>

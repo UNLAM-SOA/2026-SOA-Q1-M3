@@ -33,6 +33,14 @@
             android:name=".ThermometerActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ConfigActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ModoActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
