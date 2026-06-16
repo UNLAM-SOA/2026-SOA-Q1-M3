@@ -7,6 +7,8 @@ espressoCore = "3.7.0"
 appcompat = "1.7.1"
 material = "1.14.0"
 constraintlayout = "2.2.1"
+orgEclipsePahoAndroidService = "1.1.1"
+orgEclipsePahoClientMqttv3 = "1.2.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -16,6 +18,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+org-eclipse-paho-android-service = { module = "org.eclipse.paho:org.eclipse.paho.android.service", version.ref = "orgEclipsePahoAndroidService" }
+org-eclipse-paho-client-mqttv3 = { module = "org.eclipse.paho:org.eclipse.paho.client.mqttv3", version.ref = "orgEclipsePahoClientMqttv3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

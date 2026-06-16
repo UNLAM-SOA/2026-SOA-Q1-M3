@@ -1,6 +1,5 @@
 package com.example.thermoguard
 
-import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -13,11 +12,11 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 
 /**
- * Termómetro interactivo (Canvas + Paint).
+ * Termómetro interactivo con RANGO acotado por modo.
  *
- *  • Arrastrá el dedo para fijar la temperatura (sigue al dedo en tiempo real).
- *  • setTemperature() anima el mercurio de forma suave (presets / intro).
- *  • El color del mercurio interpola de forma gradual: azul → cian → verde → ámbar → rojo.
+ *  • La escala visual siempre es minTemp..maxTemp (0..50).
+ *  • El usuario solo puede moverse dentro de [rangeMin, rangeMax] (el modo activo).
+ *  • setMode() fija el rango, el color y anima hasta el valor inicial (el medio del rango).
  */
 class ThermometerView @JvmOverloads constructor(
     context: Context,
@@ -25,29 +24,31 @@ class ThermometerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    // Escala visual completa
     val minTemp = 0f
     val maxTemp = 50f
 
-    private var temperature = 22f      // valor objetivo
-    private var displayed = 22f        // valor realmente dibujado (animado)
+    // Rango permitido del modo activo (por defecto, todo)
+    private var rangeMin = 0f
+    private var rangeMax = 50f
+
+    private var temperature = 25f
+    private var displayed = 25f
+
+    private var accentColor = Color.parseColor("#4FC3F7")
 
     private var animator: ValueAnimator? = null
-    private val argb = ArgbEvaluator()
 
+    /** Se dispara SIEMPRE (animación o gesto). Sirve para refrescar la UI. */
     var onTemperatureChangeListener: ((Float) -> Unit)? = null
 
-    // Paleta de interpolación del mercurio
-    private val stops = intArrayOf(
-        Color.parseColor("#4FC3F7"), // frío
-        Color.parseColor("#4DD0E1"),
-        Color.parseColor("#66BB6A"),
-        Color.parseColor("#FFCA28"),
-        Color.parseColor("#EF5350")  // caliente
-    )
+    /** Se dispara SOLO cuando el usuario arrastra con el dedo. */
+    var onUserDragListener: ((Float) -> Unit)? = null
 
     private val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#1B2530")
     }
+    private val bandPaint = Paint(Paint.ANTI_ALIAS_FLAG)            // zona permitida
     private val mercuryPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val glassPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.argb(28, 255, 255, 255)
@@ -64,21 +65,54 @@ class ThermometerView @JvmOverloads constructor(
     }
 
     init {
-        if (isInEditMode) { temperature = 22f; displayed = 22f }
+        if (isInEditMode) { temperature = 25f; displayed = 25f }
     }
 
     private fun ratioOf(t: Float) = (t - minTemp) / (maxTemp - minTemp)
 
-    private fun colorFor(ratio: Float): Int {
-        val r = ratio.coerceIn(0f, 1f)
-        val seg = 1f / (stops.size - 1)
-        val idx = minOf((r / seg).toInt(), stops.size - 2)
-        val local = (r - idx * seg) / seg
-        return argb.evaluate(local, stops[idx], stops[idx + 1]) as Int
+    /** Color actual (el del modo activo). */
+    fun currentColor(): Int = accentColor
+
+    fun getTemperature(): Float = temperature
+
+    /**
+     * Configura un modo: acota el rango, fija el color y anima al valor inicial.
+     */
+    fun setMode(min: Float, max: Float, initial: Float, color: Int, animate: Boolean = true) {
+        rangeMin = min
+        rangeMax = max
+        accentColor = color
+        setTemperature(initial, animate)
     }
 
-    /** Color actual del mercurio (para sincronizar la lectura grande). */
-    fun currentColor(): Int = colorFor(ratioOf(displayed))
+    fun setTemperature(temp: Float, animate: Boolean = true) {
+        val target = temp.coerceIn(rangeMin, rangeMax)   // ← clamp al rango del modo
+        temperature = target
+        if (!animate) {
+            displayed = target
+            onTemperatureChangeListener?.invoke(displayed)
+            invalidate()
+            return
+        }
+        animator?.cancel()
+        animator = ValueAnimator.ofFloat(displayed, target).apply {
+            duration = 500
+            interpolator = DecelerateInterpolator()
+            addUpdateListener {
+                displayed = it.animatedValue as Float
+                onTemperatureChangeListener?.invoke(displayed)
+                invalidate()
+            }
+            start()
+        }
+    }
+
+    /** Animación de entrada: llena desde rangeMin hasta el valor actual. */
+    fun playIntro(to: Float = temperature) {
+        displayed = rangeMin
+        invalidate()
+        post { setTemperature(to, animate = true) }
+    }
 
     // geometría compartida draw/touch
     private var tubeTop = 0f
@@ -92,43 +126,43 @@ class ThermometerView @JvmOverloads constructor(
 
         val tubeW = w * 0.16f
         val bulbR = tubeW * 1.05f
-        val cx = w * 0.46f               // tubo centrado, deja aire a la escala
+        val cx = w * 0.46f
         tubeTop = h * 0.05f + tubeW / 2
         tubeBottom = h - bulbR * 1.7f
         val bulbCy = tubeBottom + bulbR * 0.95f
 
         val left = cx - tubeW / 2
         val right = cx + tubeW / 2
+        val usable = tubeBottom - tubeTop
 
-        // Riel (tubo) + bulbo de fondo
+        // Riel + bulbo de fondo
         val track = RectF(left, tubeTop - tubeW / 2, right, tubeBottom)
         canvas.drawRoundRect(track, tubeW / 2, tubeW / 2, trackPaint)
         canvas.drawCircle(cx, bulbCy, bulbR, trackPaint)
 
-        // Mercurio
-        val ratio = ratioOf(displayed)
-        val color = colorFor(ratio)
-        mercuryPaint.color = color
-        val usable = tubeBottom - tubeTop
-        val mercTop = tubeBottom - ratio * usable
+        // Zona permitida (banda del modo activo), tenue
+        bandPaint.color = (accentColor and 0x00FFFFFF) or 0x33000000   // ~20% alpha
+        val yBandTop = tubeBottom - ratioOf(rangeMax) * usable
+        val yBandBot = tubeBottom - ratioOf(rangeMin) * usable
+        canvas.drawRoundRect(RectF(left, yBandTop, right, yBandBot), tubeW / 2, tubeW / 2, bandPaint)
+
+        // Mercurio (color del modo)
+        mercuryPaint.color = accentColor
+        val mercTop = tubeBottom - ratioOf(displayed) * usable
         val inset = tubeW * 0.20f
         val mLeft = left + inset
         val mRight = right - inset
         val mW = mRight - mLeft
-
-        // Columna de mercurio (solo si hay algo que mostrar)
         if (mercTop < tubeBottom - mW / 2) {
-            val mercRect = RectF(mLeft, mercTop, mRight, tubeBottom)
-            canvas.drawRoundRect(mercRect, mW / 2, mW / 2, mercuryPaint)
+            canvas.drawRoundRect(RectF(mLeft, mercTop, mRight, tubeBottom), mW / 2, mW / 2, mercuryPaint)
         }
-        // Bulbo siempre lleno (es el "depósito")
         canvas.drawCircle(cx, bulbCy, bulbR * 0.80f, mercuryPaint)
 
-        // Reflejo de vidrio (sutil)
+        // Reflejo de vidrio
         val glass = RectF(left + tubeW * 0.20f, tubeTop, left + tubeW * 0.36f, tubeBottom - tubeW)
         canvas.drawRoundRect(glass, tubeW * 0.1f, tubeW * 0.1f, glassPaint)
 
-        // Escala minimalista cada 10°
+        // Escala cada 10°
         labelPaint.textSize = h * 0.030f
         var t = minTemp.toInt()
         while (t <= maxTemp.toInt()) {
@@ -138,8 +172,8 @@ class ThermometerView @JvmOverloads constructor(
             t += 10
         }
 
-        // Perilla arrastrable en el nivel actual
-        knobRingPaint.color = color
+        // Perilla
+        knobRingPaint.color = accentColor
         canvas.drawCircle(cx, mercTop, tubeW * 0.36f, knobPaint)
         canvas.drawCircle(cx, mercTop, tubeW * 0.36f, knobRingPaint)
     }
@@ -148,54 +182,21 @@ class ThermometerView @JvmOverloads constructor(
         when (event.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                 parent?.requestDisallowInterceptTouchEvent(true)
-                setFromY(event.y)
+                val usable = tubeBottom - tubeTop
+                if (usable <= 0f) return true
+                val y = event.y.coerceIn(tubeTop, tubeBottom)
+                val r = (tubeBottom - y) / usable
+                val rawTemp = minTemp + r * (maxTemp - minTemp)
+                animator?.cancel()
+                // ← clamp al rango del modo: no baja del min ni sube del max
+                temperature = rawTemp.coerceIn(rangeMin, rangeMax)
+                displayed = temperature
+                onTemperatureChangeListener?.invoke(displayed)
+                onUserDragListener?.invoke(displayed)
+                invalidate()
                 return true
             }
         }
         return super.onTouchEvent(event)
     }
-
-    private fun setFromY(y: Float) {
-        val usable = tubeBottom - tubeTop
-        if (usable <= 0f) return
-        animator?.cancel()
-        val clampedY = y.coerceIn(tubeTop, tubeBottom)
-        val r = (tubeBottom - clampedY) / usable
-        temperature = (minTemp + r * (maxTemp - minTemp)).coerceIn(minTemp, maxTemp)
-        displayed = temperature                       // sigue al dedo, sin lag
-        onTemperatureChangeListener?.invoke(displayed)
-        invalidate()
-    }
-
-    /** Cambia la temperatura con animación suave (presets). */
-    fun setTemperature(temp: Float, animate: Boolean = true) {
-        val target = temp.coerceIn(minTemp, maxTemp)
-        temperature = target
-        if (!animate) {
-            displayed = target
-            onTemperatureChangeListener?.invoke(displayed)
-            invalidate()
-            return
-        }
-        animator?.cancel()
-        animator = ValueAnimator.ofFloat(displayed, target).apply {
-            duration = 550
-            interpolator = DecelerateInterpolator()
-            addUpdateListener {
-                displayed = it.animatedValue as Float
-                onTemperatureChangeListener?.invoke(displayed)
-                invalidate()
-            }
-            start()
-        }
-    }
-
-    /** Animación de entrada: llena desde 0 hasta el valor inicial. */
-    fun playIntro(to: Float = temperature) {
-        displayed = minTemp
-        invalidate()
-        post { setTemperature(to, animate = true) }
-    }
-
-    fun getTemperature(): Float = temperature
 }
