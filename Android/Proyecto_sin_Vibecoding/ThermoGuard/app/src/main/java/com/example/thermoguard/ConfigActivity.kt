@@ -54,10 +54,10 @@ class ConfigActivity : AppCompatActivity() {
     private fun actualizarEstado() {
         if (MqttManager.isConnected()) {
             tvEstado.text = getString(R.string.status_connected)
-            tvEstado.setTextColor(getColor(android.R.color.holo_green_light))
+            tvEstado.setTextColor(getColor(R.color.status_green))
         } else {
             tvEstado.text = getString(R.string.status_disconnected)
-            tvEstado.setTextColor(getColor(android.R.color.holo_red_light))
+            tvEstado.setTextColor(getColor(R.color.status_red))
             finish() // si se cae la conexión, volvemos a conectar
         }
     }

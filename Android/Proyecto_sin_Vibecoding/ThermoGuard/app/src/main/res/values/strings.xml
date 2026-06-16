@@ -34,11 +34,11 @@
     <string name="title_config">Configuración</string>
     <string name="status_connected">● Conectado al MQTT</string>
     <string name="status_disconnected">● Desconectado</string>
-    <string name="card_termometro_title">🌡️  Termómetro</string>
+    <string name="card_termometro_title">Termómetro</string>
     <string name="card_termometro_desc">Configurar las temperaturas</string>
-    <string name="card_modo_title">🎚️  Modo</string>
+    <string name="card_modo_title">Modo</string>
     <string name="card_modo_desc">Elegir bajo / medio / alto</string>
-    <string name="card_sensor_title">📱  Sensor</string>
+    <string name="card_sensor_title">Sensor</string>
     <string name="card_sensor_desc">Acelerómetro del dispositivo</string>
     <string name="title_seleccionar_modo">Seleccionar Modo</string>
     <string name="subtitle_seleccionar_modo">Tocá un modo para enviarlo al sistema</string>
@@ -49,13 +49,13 @@
     <string name="error_broker_empty">Ingresá la URL del broker</string>
     <string name="error_port_invalid">Puerto inválido</string>
     <string name="status_connecting">Conectando...</string>
-    <string name="toast_connected_to">✅ Conectado a %s</string>
-    <string name="toast_error_prefix">❌ Error: %s</string>
-    <string name="error_not_connected">⚠️ No estás conectado al MQTT</string>
-    <string name="toast_modo_enviado">✅ Modo enviado: %s</string>
+    <string name="toast_connected_to">Conectado a %s</string>
+    <string name="toast_error_prefix">Error: %s</string>
+    <string name="error_not_connected">No estás conectado al MQTT</string>
+    <string name="toast_modo_enviado">Modo enviado: %s</string>
 
     <string name="label_frio">FRÍO</string>
     <string name="label_caliente">CALIENTE</string>
     <string name="mode_format">MODO %s</string>
-    <string name="toast_enviado_format">✅ Enviado %1$s: %2$d°C</string>
+    <string name="toast_enviado_format">Enviado %1$s: %2$d°C</string>
 </resources>

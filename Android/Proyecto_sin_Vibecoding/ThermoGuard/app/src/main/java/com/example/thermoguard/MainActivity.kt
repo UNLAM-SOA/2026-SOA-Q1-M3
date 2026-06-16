@@ -23,14 +23,6 @@ class MainActivity : AppCompatActivity() {
 
         actualizarBotonConexion()
 
-        findViewById<Button>(R.id.btnIrTermometro).setOnClickListener {
-            startActivity(Intent(this, ThermometerActivity::class.java))
-        }
-
-        findViewById<Button>(R.id.btnIrActivity2).setOnClickListener {
-            startActivity(Intent(this, SensorActivity::class.java))
-        }
-
         btnConectar.setOnClickListener {
 
             if (MqttManager.isConnected()) {
@@ -90,10 +82,10 @@ class MainActivity : AppCompatActivity() {
     private fun actualizarBotonConexion() {
         if (MqttManager.isConnected()) {
             btnConectar.text = getString(R.string.btn_desconectar)
-            btnConectar.setBackgroundColor(getColor(android.R.color.holo_red_light))
+            btnConectar.setBackgroundColor(getColor(R.color.status_red))
         } else {
             btnConectar.text = getString(R.string.btn_conectar)
-            btnConectar.setBackgroundColor(getColor(R.color.ice_blue))
+            btnConectar.setBackgroundColor(getColor(R.color.primary))
         }
         btnConectar.isEnabled = true
     }

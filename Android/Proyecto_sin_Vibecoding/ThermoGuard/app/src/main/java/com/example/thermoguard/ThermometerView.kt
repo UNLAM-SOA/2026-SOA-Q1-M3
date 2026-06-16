@@ -51,7 +51,7 @@ class ThermometerView @JvmOverloads constructor(
     private val bandPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val mercuryPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val glassPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(28, 255, 255, 255)
+        color = Color.argb(45, 255, 255, 255)
     }
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.thermometer_tick)
@@ -61,7 +61,9 @@ class ThermometerView @JvmOverloads constructor(
         color = ContextCompat.getColor(context, R.color.thermometer_label)
         textAlign = Paint.Align.LEFT
     }
-    private val knobPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
+    private val knobPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.deep_ocean_text)
+    }
     private val knobRingPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE; strokeWidth = 7f
     }
@@ -121,11 +123,13 @@ class ThermometerView @JvmOverloads constructor(
         if (w == 0f || h == 0f) return
 
         val tubeW = w * 0.16f
-        val bulbR = tubeW * 1.05f
+        val bulbR = tubeW * 1.30f
         val cx = w * 0.46f
-        tubeTop = h * 0.05f + tubeW / 2
-        tubeBottom = h - bulbR * 1.7f
-        val bulbCy = tubeBottom + bulbR * 0.95f
+        // Margen arriba = radio del tope redondeado + aire
+        tubeTop = h * 0.04f + tubeW / 2 + 6f
+        // El bulbo entero (centro + radio) entra antes del borde inferior
+        val bulbCy = h - bulbR - 8f
+        tubeBottom = bulbCy - bulbR * 0.55f
 
         val left = cx - tubeW / 2
         val right = cx + tubeW / 2
@@ -168,10 +172,12 @@ class ThermometerView @JvmOverloads constructor(
             t += 10
         }
 
-        // Perilla
+        // Perilla (clamp: nunca sale del tubo por arriba)
+        val knobR = tubeW * 0.36f
+        val knobY = mercTop.coerceIn(tubeTop + knobR * 0.2f, tubeBottom)
         knobRingPaint.color = accentColor
-        canvas.drawCircle(cx, mercTop, tubeW * 0.36f, knobPaint)
-        canvas.drawCircle(cx, mercTop, tubeW * 0.36f, knobRingPaint)
+        canvas.drawCircle(cx, knobY, knobR, knobPaint)
+        canvas.drawCircle(cx, knobY, knobR, knobRingPaint)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

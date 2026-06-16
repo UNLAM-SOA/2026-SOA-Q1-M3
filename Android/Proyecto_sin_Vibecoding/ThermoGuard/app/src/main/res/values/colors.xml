@@ -2,23 +2,41 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="dark_bg">#0E1116</color>
-    <color name="dark_surface">#161B22</color>
-    <color name="ice_blue">#81D4FA</color>
-    <color name="ice_blue_dark">#0288D1</color>
-    <color name="accent_blue">#00BCD4</color>
-    <color name="gray_text">#B0B0B0</color>
 
-    <!-- Thermometer UI -->
-    <color name="thermometer_track">#1B2530</color>
-    <color name="thermometer_tick">#33404D</color>
-    <color name="thermometer_label">#5B6B79</color>
-    <color name="thermometer_frio">#4FC3F7</color>
-    <color name="thermometer_medio">#66BB6A</color>
-    <color name="thermometer_caliente">#EF5350</color>
+    <!-- Deep Ocean Palette -->
+    <color name="deep_ocean_bg">#0A0E1A</color>
+    <color name="deep_ocean_surface">#0D1B2A</color>
+    <color name="deep_ocean_accent">#00B4D8</color>
+    <color name="deep_ocean_secondary">#023E8A</color>
+    <color name="deep_ocean_text">#CAF0F8</color>
+    <color name="deep_ocean_text_secondary">#90E0EF</color>
 
-    <color name="text_primary">#ECEFF1</color>
-    <color name="text_secondary">#90A4AE</color>
-    <color name="text_tertiary">#546E7A</color>
-    <color name="accent_yellow">#FFCA28</color>
+    <!-- Temperature Scale (Accordant to Blue, Yellow, Red) -->
+    <color name="thermometer_frio">#0077B6</color>     <!-- Cold Blue -->
+    <color name="thermometer_medio">#FFB703</color>    <!-- Amber/Yellow -->
+    <color name="thermometer_caliente">#E63946</color> <!-- Red -->
+
+    <!-- Thermometer UI Details -->
+    <color name="thermometer_track">#1B263B</color>
+    <color name="thermometer_tick">#415A77</color>
+    <color name="thermometer_label">#778DA9</color>
+
+    <!-- Legacy / Compatibility Mappings -->
+    <color name="primary">@color/deep_ocean_accent</color>
+    <color name="primary_variant">@color/deep_ocean_secondary</color>
+    <color name="secondary">@color/deep_ocean_secondary</color>
+    <color name="ice_blue">@color/deep_ocean_accent</color>
+    <color name="ice_blue_dark">@color/deep_ocean_secondary</color>
+    <color name="accent_blue">@color/deep_ocean_accent</color>
+    <color name="dark_bg">@color/deep_ocean_bg</color>
+    <color name="dark_surface">@color/deep_ocean_surface</color>
+    <color name="bg_app">@color/deep_ocean_bg</color>
+    <color name="bg_surface">@color/deep_ocean_surface</color>
+    <color name="gray_text">@color/thermometer_label</color>
+    <color name="text_primary">@color/deep_ocean_text</color>
+    <color name="text_secondary">@color/deep_ocean_text_secondary</color>
+    <color name="text_main">@color/deep_ocean_text</color>
+    <color name="text_sub">@color/deep_ocean_text_secondary</color>
+    <color name="status_green">#06D6A0</color>
+    <color name="status_red">@color/thermometer_caliente</color>
 </resources>
