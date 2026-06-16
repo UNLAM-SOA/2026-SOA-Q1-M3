@@ -12,7 +12,7 @@ import com.google.android.material.button.MaterialButton
  */
 class ModoActivity : AppCompatActivity() {
 
-    private val TOPIC_MODO = "thermoguard/config/modo"
+    private val TOPIC_MODO = Constants.TOPIC_SET_MODO
 
     private lateinit var btnBack: MaterialButton
     private lateinit var tvModoActual: TextView

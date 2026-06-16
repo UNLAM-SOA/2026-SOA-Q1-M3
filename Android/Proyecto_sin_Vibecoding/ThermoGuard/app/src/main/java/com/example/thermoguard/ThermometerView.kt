@@ -51,7 +51,8 @@ class ThermometerView @JvmOverloads constructor(
     private val bandPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val mercuryPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val glassPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(45, 255, 255, 255)
+        color = Color.argb(28, 255, 255, 255)
+
     }
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.thermometer_tick)

@@ -57,8 +57,8 @@ class MainActivity : AppCompatActivity() {
                         actualizarBotonConexion()
                         Toast.makeText(this, getString(R.string.toast_connected_to, broker), Toast.LENGTH_SHORT).show()
 
-                        MqttManager.mqttSubscribe("thermoguard/sensor/temperatura", 0)
-                        MqttManager.mqttSubscribe("thermoguard/sensor/estado", 1)
+                        MqttManager.mqttSubscribe(Constants.TOPIC_SENSOR_TEMP, 0)
+                        MqttManager.mqttSubscribe(Constants.TOPIC_SENSOR_ESTADO, 1)
 
                         // Al conectar → ir a la pantalla de configuración
                         startActivity(Intent(this, ConfigActivity::class.java))

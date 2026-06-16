@@ -24,27 +24,26 @@
                                 "info",
                                 "help",
                                 "config",
-                                "context"
-                            ],
-                            "height": 304,
-                            "hidden": false,
-                            "active": "help"
-                        },
-                        "bottom": {
-                            "tabs": [
+                                "context",
                                 "debug"
                             ],
+                            "height": 759,
                             "hidden": false,
+                            "active": "debug"
+                        },
+                        "bottom": {
+                            "tabs": [],
+                            "hidden": true,
                             "active": "debug"
                         }
                     },
                     "secondary": {
-                        "width": 210,
+                        "width": 466,
                         "top": {
                             "tabs": [
                                 "explorer"
                             ],
-                            "height": 304,
+                            "height": 213,
                             "hidden": false,
                             "active": "explorer"
                         },

@@ -2,18 +2,17 @@
     <!-- Base application theme. -->
     <style name="Theme.ThermoGuard" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/deep_ocean_accent</item>
-        <item name="colorPrimaryVariant">@color/deep_ocean_secondary</item>
-        <item name="colorOnPrimary">@color/deep_ocean_bg</item>
+        <item name="colorPrimary">@color/ice_blue</item>
+        <item name="colorPrimaryVariant">@color/ice_blue_dark</item>
+        <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/deep_ocean_secondary</item>
-        <item name="colorSecondaryVariant">@color/deep_ocean_accent</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/accent_blue</item>
+        <item name="colorSecondaryVariant">@color/accent_blue</item>
+        <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/deep_ocean_bg</item>
+        <item name="android:statusBarColor">@color/dark_bg</item>
         <!-- Background color -->
-        <item name="android:windowBackground">@color/deep_ocean_bg</item>
-        <!-- Text color -->
-        <item name="android:textColorPrimary">@color/deep_ocean_text</item>
+        <item name="android:windowBackground">@color/dark_bg</item>
+        <!-- Customize your theme here. -->
     </style>
 </resources>

@@ -11,19 +11,19 @@ import java.util.Locale
 class ThermometerActivity : AppCompatActivity() {
 
     // ── Topics MQTT ──────────────────────────────────────────────
-    private val TOPIC_FRIO     = "thermoguard/config/tempFrio"
-    private val TOPIC_MEDIO    = "thermoguard/config/tempMedio"
-    private val TOPIC_CALIENTE = "thermoguard/config/tempCaliente"
+    private val TOPIC_FRIO     = Constants.TOPIC_SET_FRIO
+    private val TOPIC_MEDIO    = Constants.TOPIC_SET_MEDIO
+    private val TOPIC_CALIENTE = Constants.TOPIC_SET_CALIENTE
 
     private enum class Estado { FRIO, MEDIO, CALIENTE }
 
     // ── 3 rangos FIJOS e inalterables (no se solapan) ────────────
-    private val FRIO_MIN     = 0f
-    private val FRIO_MAX     = 16.6f
-    private val MEDIO_MIN    = 16.6f
-    private val MEDIO_MAX    = 33.3f
-    private val CALIENTE_MIN = 33.3f
-    private val CALIENTE_MAX = 50f
+    private val FRIO_MIN     = Constants.FRIO_MIN
+    private val FRIO_MAX     = Constants.FRIO_MAX
+    private val MEDIO_MIN    = Constants.MEDIO_MIN
+    private val MEDIO_MAX    = Constants.MEDIO_MAX
+    private val CALIENTE_MIN = Constants.CALIENTE_MIN
+    private val CALIENTE_MAX = Constants.CALIENTE_MAX
 
     // Valor actual de cada modo
     private var valFrio     = 8f
