@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -29,6 +30,10 @@ class HistorialActivity : AppCompatActivity() {
 
     private lateinit var rvHistorial: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var etDeviceId: TextInputEditText
+    private lateinit var etLimit: TextInputEditText
+    private lateinit var btnRefresh: MaterialButton
+    
     private val historialList = mutableListOf<TelemetryEntry>()
     private lateinit var adapter: HistorialAdapter
 
@@ -38,23 +43,45 @@ class HistorialActivity : AppCompatActivity() {
 
         rvHistorial = findViewById(R.id.rvHistorial)
         progressBar = findViewById(R.id.progressBar)
+        etDeviceId  = findViewById(R.id.etDeviceId)
+        etLimit     = findViewById(R.id.etLimit)
+        btnRefresh  = findViewById(R.id.btnRefresh)
         val btnBack = findViewById<MaterialButton>(R.id.btnBack)
 
         btnBack.setOnClickListener { finish() }
+
+        // Cargar valores iniciales de constantes
+        etDeviceId.setText(Constants.DEFAULT_DEVICE_ID)
 
         rvHistorial.layoutManager = LinearLayoutManager(this)
         adapter = HistorialAdapter(historialList)
         rvHistorial.adapter = adapter
 
+        btnRefresh.setOnClickListener {
+            fetchHistorial()
+        }
+
+        // Carga inicial
         fetchHistorial()
     }
 
     private fun fetchHistorial() {
+        val deviceId = etDeviceId.text.toString().trim()
+        val limitStr = etLimit.text.toString().trim()
+        
+        if (deviceId.isEmpty()) {
+            etDeviceId.error = getString(R.string.error_broker_empty) // Usando uno genérico o podrías crear uno nuevo
+            return
+        }
+        
+        val limit = limitStr.toIntOrNull() ?: 50
+
         progressBar.visibility = View.VISIBLE
+        btnRefresh.isEnabled = false
         
         Thread {
             try {
-                val urlString = "${Constants.API_HISTORIAL}?device_id=${Constants.DEFAULT_DEVICE_ID}&limit=50"
+                val urlString = "${Constants.API_HISTORIAL}?device_id=$deviceId&limit=$limit"
                 val url = URL(urlString)
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "GET"
@@ -71,6 +98,7 @@ class HistorialActivity : AppCompatActivity() {
 
                     val jsonObject = JSONObject(response.toString())
                     val jsonArray = jsonObject.getJSONArray("data")
+                    
                     historialList.clear()
                     for (i in 0 until jsonArray.length()) {
                         val obj = jsonArray.getJSONObject(i)
@@ -87,10 +115,12 @@ class HistorialActivity : AppCompatActivity() {
                     runOnUiThread {
                         adapter.notifyDataSetChanged()
                         progressBar.visibility = View.GONE
+                        btnRefresh.isEnabled = true
                     }
                 } else {
                     runOnUiThread {
                         progressBar.visibility = View.GONE
+                        btnRefresh.isEnabled = true
                         Toast.makeText(this, "Error: ${conn.responseCode}", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -98,6 +128,7 @@ class HistorialActivity : AppCompatActivity() {
                 Log.e("HISTORIAL", "Error fetching data", e)
                 runOnUiThread {
                     progressBar.visibility = View.GONE
+                    btnRefresh.isEnabled = true
                     Toast.makeText(this, "Error de red: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
