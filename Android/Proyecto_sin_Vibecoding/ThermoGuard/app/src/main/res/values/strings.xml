@@ -42,6 +42,9 @@
     <string name="card_sensor_desc">Acelerómetro del dispositivo</string>
     <string name="card_alarma_title">Botón</string>
     <string name="card_alarma_desc">Control manual del botón</string>
+    <string name="card_historial_title">Historial</string>
+    <string name="card_historial_desc">Ver registros de temperatura</string>
+    <string name="title_historial">Historial de Telemetría</string>
     <string name="title_alarma">Control de Botón</string>
     <string name="btn_encender">ENCENDER BOTÓN</string>
     <string name="toast_alarma_encendida">Botón encendido</string>

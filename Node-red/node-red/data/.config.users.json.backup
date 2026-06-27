@@ -24,17 +24,16 @@
                                 "info",
                                 "help",
                                 "config",
-                                "context"
+                                "context",
+                                "debug"
                             ],
                             "height": 759,
                             "hidden": false,
-                            "active": "help"
+                            "active": "debug"
                         },
                         "bottom": {
-                            "tabs": [
-                                "debug"
-                            ],
-                            "hidden": false,
+                            "tabs": [],
+                            "hidden": true,
                             "active": "debug"
                         }
                     },
@@ -44,7 +43,7 @@
                             "tabs": [
                                 "explorer"
                             ],
-                            "height": 213,
+                            "height": 215,
                             "hidden": false,
                             "active": "explorer"
                         },

@@ -27,6 +27,7 @@
     <color name="secondary">@color/deep_ocean_secondary</color>
     <color name="status_green">#06D6A0</color>
     <color name="status_red">@color/thermometer_caliente</color>
+    <color name="historial_accent">#00F5D4</color>
 
     <!-- Legacy Mappings for Layouts not yet refactored -->
     <color name="ice_blue">@color/deep_ocean_accent</color>

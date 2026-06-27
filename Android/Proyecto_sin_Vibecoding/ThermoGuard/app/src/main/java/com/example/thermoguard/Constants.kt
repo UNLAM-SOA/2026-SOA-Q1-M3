@@ -28,4 +28,8 @@ object Constants {
     const val MEDIO_MAX = 33.3f
     const val CALIENTE_MIN = 33.3f
     const val CALIENTE_MAX = 50f
+
+    // API Configuration
+    const val API_HISTORIAL = "http://192.168.1.93:1880/api/historial"
+    const val DEFAULT_DEVICE_ID = "ESP32"
 }

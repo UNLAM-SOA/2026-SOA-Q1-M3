@@ -9,8 +9,6 @@ import com.google.android.material.card.MaterialCardView
 
 /**
  * Pantalla HUB de configuración. Se abre al conectar al broker.
- * Desde acá se accede al termómetro, al modo y al sensor.
- * Muestra el estado de conexión y permite desconectar.
  */
 class ConfigActivity : AppCompatActivity() {
 
@@ -20,6 +18,7 @@ class ConfigActivity : AppCompatActivity() {
     private lateinit var cardModo: MaterialCardView
     private lateinit var cardSensor: MaterialCardView
     private lateinit var cardBoton: MaterialCardView
+    private lateinit var cardHistorial: MaterialCardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +30,7 @@ class ConfigActivity : AppCompatActivity() {
         cardModo       = findViewById(R.id.cardModo)
         cardSensor     = findViewById(R.id.cardSensor)
         cardBoton      = findViewById(R.id.cardBoton)
+        cardHistorial  = findViewById(R.id.cardHistorial)
 
         cardTermometro.setOnClickListener {
             startActivity(Intent(this, ThermometerActivity::class.java))
@@ -44,10 +44,13 @@ class ConfigActivity : AppCompatActivity() {
         cardBoton.setOnClickListener {
             startActivity(Intent(this, BotonActivity::class.java))
         }
+        cardHistorial.setOnClickListener {
+            startActivity(Intent(this, HistorialActivity::class.java))
+        }
 
         btnDesconectar.setOnClickListener {
             MqttManager.mqttDisconnect()
-            finish() // vuelve a la pantalla de conexión (MainActivity)
+            finish()
         }
     }
 
@@ -63,7 +66,7 @@ class ConfigActivity : AppCompatActivity() {
         } else {
             tvEstado.text = getString(R.string.status_disconnected)
             tvEstado.setTextColor(getColor(R.color.status_red))
-            finish() // si se cae la conexión, volvemos a conectar
+            finish()
         }
     }
 }

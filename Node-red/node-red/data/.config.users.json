@@ -38,12 +38,12 @@
                         }
                     },
                     "secondary": {
-                        "width": 466,
+                        "width": 264,
                         "top": {
                             "tabs": [
                                 "explorer"
                             ],
-                            "height": 213,
+                            "height": 215,
                             "hidden": false,
                             "active": "explorer"
                         },
