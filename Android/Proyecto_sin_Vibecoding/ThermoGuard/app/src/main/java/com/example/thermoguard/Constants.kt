@@ -10,6 +10,10 @@ object Constants {
     const val TOPIC_SENSOR_ESTADO = "grupoM3/sensor/estado"
     const val TOPIC_COMANDO_ALARMA = "grupoM3/comando"
 
+    // MQTT Configuration
+    const val DEFAULT_BROKER = "test.mosquitto.org"
+    const val DEFAULT_PORT = "1883"
+
     // MQTT Payloads / Messages
     const val MSG_ALARMA_OFF = "APAGAR"
     const val MSG_ALARMA_ON = "ENCENDER"

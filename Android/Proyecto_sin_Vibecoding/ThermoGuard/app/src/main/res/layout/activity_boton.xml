@@ -47,7 +47,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/white"
-        app:backgroundTint="@color/status_red"
+        app:backgroundTint="@color/primary"
         app:cornerRadius="18dp"
         android:layout_marginTop="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"

@@ -55,7 +55,6 @@
                     android:id="@+id/etBrokerUrl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/default_broker"
                     android:textColor="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -72,7 +71,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:text="@string/default_port"
                     android:textColor="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 

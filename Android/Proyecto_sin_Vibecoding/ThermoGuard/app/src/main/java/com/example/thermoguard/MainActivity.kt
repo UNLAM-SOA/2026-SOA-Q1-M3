@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
         etPort      = findViewById(R.id.etPort)
         btnConectar = findViewById(R.id.btnConectar)
 
+        // Pre-fill with default constants
+        etBrokerUrl.setText(Constants.DEFAULT_BROKER)
+        etPort.setText(Constants.DEFAULT_PORT)
+
         actualizarBotonConexion()
 
         btnConectar.setOnClickListener {
