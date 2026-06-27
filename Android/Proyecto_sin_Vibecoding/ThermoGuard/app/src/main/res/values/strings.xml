@@ -45,7 +45,8 @@
     <string name="card_historial_title">Historial</string>
     <string name="card_historial_desc">Ver registros de temperatura</string>
     <string name="title_historial">Historial de Telemetría</string>
-    <string name="hint_device_id">ID Dispositivo</string>
+    <string name="hint_api_ip">IP Servidor (ej: 192.168.1.93)</string>
+    <string name="hint_device_id">ID Dispositivo (Opcional)</string>
     <string name="hint_limit">Cantidad (ej: 50)</string>
     <string name="btn_actualizar">ACTUALIZAR</string>
     <string name="title_alarma">Control de Botón</string>

@@ -30,10 +30,11 @@ class HistorialActivity : AppCompatActivity() {
 
     private lateinit var rvHistorial: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var etApiIp: TextInputEditText
     private lateinit var etDeviceId: TextInputEditText
     private lateinit var etLimit: TextInputEditText
     private lateinit var btnRefresh: MaterialButton
-    
+
     private val historialList = mutableListOf<TelemetryEntry>()
     private lateinit var adapter: HistorialAdapter
 
@@ -43,6 +44,7 @@ class HistorialActivity : AppCompatActivity() {
 
         rvHistorial = findViewById(R.id.rvHistorial)
         progressBar = findViewById(R.id.progressBar)
+        etApiIp     = findViewById(R.id.etApiIp)
         etDeviceId  = findViewById(R.id.etDeviceId)
         etLimit     = findViewById(R.id.etLimit)
         btnRefresh  = findViewById(R.id.btnRefresh)
@@ -52,6 +54,9 @@ class HistorialActivity : AppCompatActivity() {
 
         // Cargar valores iniciales de constantes
         etDeviceId.setText(Constants.DEFAULT_DEVICE_ID)
+        
+        // Valor por defecto de la IP
+        etApiIp.setText("192.168.1.93")
 
         rvHistorial.layoutManager = LinearLayoutManager(this)
         adapter = HistorialAdapter(historialList)
@@ -66,11 +71,12 @@ class HistorialActivity : AppCompatActivity() {
     }
 
     private fun fetchHistorial() {
+        val ip = etApiIp.text.toString().trim()
         val deviceId = etDeviceId.text.toString().trim()
         val limitStr = etLimit.text.toString().trim()
         
-        if (deviceId.isEmpty()) {
-            etDeviceId.error = getString(R.string.error_broker_empty) // Usando uno genérico o podrías crear uno nuevo
+        if (ip.isEmpty()) {
+            etApiIp.error = "Ingresa la IP del servidor"
             return
         }
         
@@ -81,8 +87,20 @@ class HistorialActivity : AppCompatActivity() {
         
         Thread {
             try {
-                val urlString = "${Constants.API_HISTORIAL}?device_id=$deviceId&limit=$limit"
+                // Construir la URL base
+                val baseUrl = "http://$ip:1880/api/historial"
+                
+                // Construir Query Parameters
+                val queryParams = mutableListOf<String>()
+                queryParams.add("limit=$limit")
+                if (deviceId.isNotEmpty()) {
+                    queryParams.add("device_id=$deviceId")
+                }
+                
+                val urlString = "$baseUrl?${queryParams.joinToString("&")}"
                 val url = URL(urlString)
+                Log.d("HISTORIAL", "Fetching from: $urlString")
+                
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "GET"
                 conn.connectTimeout = 5000
