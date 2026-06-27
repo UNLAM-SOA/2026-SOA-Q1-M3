@@ -30,20 +30,20 @@ class ModoActivity : AppCompatActivity() {
         btnMedio     = findViewById(R.id.btnMedio)
         btnAlto      = findViewById(R.id.btnAlto)
 
-        btnBajo.setOnClickListener  { enviarModo(getString(R.string.preset_bajo)) }
-        btnMedio.setOnClickListener { enviarModo(getString(R.string.preset_medio)) }
-        btnAlto.setOnClickListener  { enviarModo(getString(R.string.preset_alto)) }
+        btnBajo.setOnClickListener  { enviarModo(Constants.MSG_MODO_BAJO, getString(R.string.preset_bajo)) }
+        btnMedio.setOnClickListener { enviarModo(Constants.MSG_MODO_MEDIO, getString(R.string.preset_medio)) }
+        btnAlto.setOnClickListener  { enviarModo(Constants.MSG_MODO_ALTO, getString(R.string.preset_alto)) }
 
         btnBack.setOnClickListener { finish() }
     }
 
-    private fun enviarModo(modo: String) {
+    private fun enviarModo(payload: String, label: String) {
         if (!MqttManager.isConnected()) {
             Toast.makeText(this, getString(R.string.error_not_connected), Toast.LENGTH_SHORT).show()
             return
         }
-        MqttManager.mqttPublish(TOPIC_MODO, modo, 1)
-        tvModoActual.text = getString(R.string.modo_actual_prefix, modo)
-        Toast.makeText(this, getString(R.string.toast_modo_enviado, modo), Toast.LENGTH_SHORT).show()
+        MqttManager.mqttPublish(TOPIC_MODO, payload, 1)
+        tvModoActual.text = getString(R.string.modo_actual_prefix, label)
+        Toast.makeText(this, getString(R.string.toast_modo_enviado, label), Toast.LENGTH_SHORT).show()
     }
 }

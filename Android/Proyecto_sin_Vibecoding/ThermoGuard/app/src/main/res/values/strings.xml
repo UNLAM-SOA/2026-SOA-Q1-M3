@@ -40,6 +40,11 @@
     <string name="card_modo_desc">Elegir bajo / medio / alto</string>
     <string name="card_sensor_title">Sensor</string>
     <string name="card_sensor_desc">Acelerómetro del dispositivo</string>
+    <string name="card_alarma_title">Botón</string>
+    <string name="card_alarma_desc">Control manual del botón</string>
+    <string name="title_alarma">Control de Botón</string>
+    <string name="btn_encender">ENCENDER BOTÓN</string>
+    <string name="toast_alarma_encendida">Botón encendido</string>
     <string name="title_seleccionar_modo">Seleccionar Modo</string>
     <string name="subtitle_seleccionar_modo">Tocá un modo para enviarlo al sistema</string>
     <string name="modo_actual_prefix">Modo actual: %s</string>

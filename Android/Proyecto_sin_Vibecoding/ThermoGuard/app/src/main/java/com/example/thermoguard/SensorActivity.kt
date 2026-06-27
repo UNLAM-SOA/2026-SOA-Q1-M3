@@ -97,7 +97,7 @@ class SensorActivity : AppCompatActivity(), SensorEventListener {
         }
 
         // Publica el comando para apagar la alarma
-        MqttManager.mqttPublish(TOPIC_ALARMA, "OFF", 1)
+        MqttManager.mqttPublish(TOPIC_ALARMA, Constants.MSG_ALARMA_OFF, 1)
         Toast.makeText(this, getString(R.string.sensor_alarma_apagada), Toast.LENGTH_SHORT).show()
 
         // Volver al estado de reposo después de un momento

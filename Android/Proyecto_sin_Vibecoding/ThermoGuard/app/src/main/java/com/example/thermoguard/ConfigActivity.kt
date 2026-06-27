@@ -19,6 +19,7 @@ class ConfigActivity : AppCompatActivity() {
     private lateinit var cardTermometro: MaterialCardView
     private lateinit var cardModo: MaterialCardView
     private lateinit var cardSensor: MaterialCardView
+    private lateinit var cardBoton: MaterialCardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,7 @@ class ConfigActivity : AppCompatActivity() {
         cardTermometro = findViewById(R.id.cardTermometro)
         cardModo       = findViewById(R.id.cardModo)
         cardSensor     = findViewById(R.id.cardSensor)
+        cardBoton      = findViewById(R.id.cardBoton)
 
         cardTermometro.setOnClickListener {
             startActivity(Intent(this, ThermometerActivity::class.java))
@@ -38,6 +40,9 @@ class ConfigActivity : AppCompatActivity() {
         }
         cardSensor.setOnClickListener {
             startActivity(Intent(this, SensorActivity::class.java))
+        }
+        cardBoton.setOnClickListener {
+            startActivity(Intent(this, BotonActivity::class.java))
         }
 
         btnDesconectar.setOnClickListener {
@@ -54,10 +59,10 @@ class ConfigActivity : AppCompatActivity() {
     private fun actualizarEstado() {
         if (MqttManager.isConnected()) {
             tvEstado.text = getString(R.string.status_connected)
-            tvEstado.setTextColor(getColor(android.R.color.holo_green_light))
+            tvEstado.setTextColor(getColor(R.color.status_green))
         } else {
             tvEstado.text = getString(R.string.status_disconnected)
-            tvEstado.setTextColor(getColor(android.R.color.holo_red_light))
+            tvEstado.setTextColor(getColor(R.color.status_red))
             finish() // si se cae la conexión, volvemos a conectar
         }
     }
