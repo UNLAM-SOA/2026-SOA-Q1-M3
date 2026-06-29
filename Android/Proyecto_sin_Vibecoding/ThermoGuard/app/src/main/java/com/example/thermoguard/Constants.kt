@@ -28,13 +28,7 @@ object Constants {
     // Estados de la FSM (Hardware)
     const val STATE_IDLE = "IDLE"
     const val STATE_MONITOREANDO = "MONITOREANDO"
-    const val STATE_ALARMA = "ALARMA"
-
-    // Textos de visualización para estados
-    const val DESC_ESTADO_IDLE = "IDLE"
-    const val DESC_ESTADO_MONITOREANDO = "MONITOREANDO"
-    const val DESC_ESTADO_ALARMA = "¡ALERTA!"
-    const val DESC_ESTADO_ESPERA = "Esperando reporte de hardware..."
+    const val STATE_ALARMA = "ALERTA"
 
     // Límites de Temperatura
     const val FRIO_MIN = 0f

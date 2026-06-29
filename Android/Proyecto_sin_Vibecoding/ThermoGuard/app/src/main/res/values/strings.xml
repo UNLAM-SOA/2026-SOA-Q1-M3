@@ -16,6 +16,12 @@
     <string name="status_disconnected">● Sistema Fuera de Línea</string>
     <string name="status_hardware_format">Estado Hardware: %s</string>
     <string name="status_hardware_waiting">Esperando reporte de hardware...</string>
+    <string name="status_hardware_idle">IDLE</string>
+    <string name="status_hardware_monitoring">MONITOREANDO</string>
+    <string name="status_hardware_alarm">¡TEMPERATURA ALCANZADA!</string>
+    <string name="notification_channel_name">Alarmas de Hardware</string>
+    <string name="notification_channel_desc">Se alcanzo la temperatura deseada</string>
+    <string name="notification_alarm_content">Se alcanzo la temperatura deseada.</string>
 
     <string name="card_termometro_title">Monitor Térmico</string>
     <string name="card_termometro_desc">Lectura de temperatura desde base de datos</string>
