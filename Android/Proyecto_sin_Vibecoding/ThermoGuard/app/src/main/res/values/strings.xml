@@ -1,78 +1,92 @@
 <resources>
     <string name="app_name">ThermoGuard</string>
-    <string name="title_mqtt">Configuración MQTT</string>
-    <string name="hint_broker">Broker URL</string>
-    <string name="default_broker">broker.hivemq.com</string>
-    <string name="hint_port">Puerto</string>
-    <string name="default_port">1883</string>
-    <string name="btn_conectar">CONECTAR</string>
-    <string name="btn_desconectar">DESCONECTAR</string>
-    <string name="title_temp">Control de Temperatura</string>
-    <string name="hint_temp">Temperatura objetivo (°C)</string>
-    <string name="btn_enviar">ENVIAR AL SISTEMA</string>
-    <string name="btn_nav_sensor">VER SENSOR DE MOVIMIENTO</string>
 
-    <string name="title_sensor">Sensor de Movimiento</string>
-    <string name="instruccion_shake">Agitá el dispositivo para desactivar la alarma</string>
-    <string name="estado_reposo">Estado: En reposo</string>
-    <string name="btn_monitoreo">ACTIVAR MONITOREO</string>
-    <string name="desc_cold_logo">Cold Logo</string>
-    <string name="desc_motion_icon">Motion Icon</string>
-    <string name="btn_ir_termometro">VER TERMÓMETRO</string>
-    <string name="title_thermometer">Termómetro Profesional</string>
-    <string name="btn_volver">VOLVER</string>
-    <string name="btn_volver_icon">‹  Volver</string>
+    <!-- Pantalla de Inicio / Conexión -->
+    <string name="title_mqtt">Conexión al Sistema</string>
+    <string name="subtitle_mqtt">Configura el broker para sincronizar telemetría</string>
+    <string name="hint_broker">Dirección del Servidor (URL)</string>
+    <string name="hint_port">Puerto de Red</string>
+    <string name="btn_conectar">ESTABLECER VÍNCULO</string>
+    <string name="btn_desconectar">CERRAR CONEXIÓN</string>
+
+    <!-- Panel de Control (Hub) -->
+    <string name="title_config">Panel de Gestión</string>
+    <string name="subtitle_config">Selecciona un módulo para operar el hardware</string>
+    <string name="status_connected">● Sistema en Línea</string>
+    <string name="status_disconnected">● Sistema Fuera de Línea</string>
+    <string name="status_hardware_format">Estado Hardware: %s</string>
+    <string name="status_hardware_waiting">Esperando reporte de hardware...</string>
+
+    <string name="card_termometro_title">Monitor Térmico</string>
+    <string name="card_termometro_desc">Lectura de temperatura desde base de datos</string>
+    <string name="card_modo_title">Control de Perfiles</string>
+    <string name="card_modo_desc">Ajustar rangos operativos por software</string>
+    <string name="card_sensor_title">Apagar Agitando</string>
+    <string name="card_sensor_desc">Vigilancia por acelerómetro del dispositivo</string>
+    <string name="card_alarma_title">Actuador Digital</string>
+    <string name="card_alarma_desc">Control manual de encendido/apagado remoto</string>
+    <string name="card_historial_title">Auditoría de Datos</string>
+    <string name="card_historial_desc">Revisión de registros históricos del servidor</string>
+
+    <!-- Actividades específicas -->
+    <string name="title_thermometer">Lectura Termómetro</string>
+    <string name="subtitle_thermometer">Monitoreo de telemetría del sensor activo</string>
+    <string name="last_update_format">Sincronizado: %s</string>
+    <string name="btn_actualizar_term">REFRESCAR DATOS</string>
+
+    <string name="title_seleccionar_modo">Gestión de Modos</string>
+    <string name="subtitle_seleccionar_modo">Cambia el perfil operativo</string>
+    <string name="modo_actual_prefix">Perfil activo: %s</string>
+    <string name="modo_desconocido">—</string>
+
+    <string name="title_sensor">Apagar alarma</string>
+    <string name="subtitle_sensor">Detección de eventos por agitación física</string>
+    <string name="desc_motion_icon">Icono de movimiento</string>
+    <string name="instruccion_shake">Agitá el teléfono para enviar señal de reset</string>
+    <string name="estado_reposo">Estado: Vigilando...</string>
+
+    <string name="title_alarma">Accionamiento Manual</string>
+    <string name="subtitle_alarma">Control de encendido para dispositivos remotos</string>
+    <string name="btn_encender">ENCENDER ACTUADOR</string>
+    <string name="toast_alarma_encendida">Señal de encendido enviada</string>
+
+    <string name="title_historial">Historial de Red</string>
+    <string name="subtitle_historial">Consulta de registros en base de datos</string>
+    <string name="hint_api_ip">IP del Servidor Central</string>
+    <string name="hint_device_id">Identificador del Dispositivo</string>
+    <string name="hint_limit">Registros a traer</string>
+    <string name="default_limit">50</string>
+    <string name="btn_actualizar">CARGAR REGISTROS</string>
+
+    <string name="btn_volver_icon">‹  Volver al Panel</string>
+
+    <!-- Formatos y Errores -->
     <string name="default_temp">0.0°C</string>
-    <string name="mode_medio">MODO MEDIO</string>
+    <string name="temp_format">%.1f°C</string>
+    <string name="mode_format">PERFIL %s</string>
     <string name="preset_bajo">BAJO</string>
     <string name="preset_medio">MEDIO</string>
     <string name="preset_alto">ALTO</string>
-    <string name="mode_bajo">MODO BAJO</string>
-    <string name="mode_alto">MODO ALTO</string>
-    <string name="temp_format">%.1f°C</string>
-
-    <string name="title_config">Configuración</string>
-    <string name="status_connected">● Conectado al MQTT</string>
-    <string name="status_disconnected">● Desconectado</string>
-    <string name="card_termometro_title">Termómetro</string>
-    <string name="card_termometro_desc">Configurar las temperaturas</string>
-    <string name="card_modo_title">Modo</string>
-    <string name="card_modo_desc">Elegir bajo / medio / alto</string>
-    <string name="card_sensor_title">Sensor</string>
-    <string name="card_sensor_desc">Acelerómetro del dispositivo</string>
-    <string name="card_alarma_title">Botón</string>
-    <string name="card_alarma_desc">Control manual del botón</string>
-    <string name="card_historial_title">Historial</string>
-    <string name="card_historial_desc">Ver registros de temperatura</string>
-    <string name="title_historial">Historial de Telemetría</string>
-    <string name="hint_api_ip">IP Servidor (ej: 192.168.1.93)</string>
-    <string name="hint_device_id">ID Dispositivo (Opcional)</string>
-    <string name="hint_limit">Cantidad (ej: 50)</string>
-    <string name="btn_actualizar">ACTUALIZAR</string>
-    <string name="title_alarma">Control de Botón</string>
-    <string name="btn_encender">ENCENDER BOTÓN</string>
-    <string name="toast_alarma_encendida">Botón encendido</string>
-    <string name="title_seleccionar_modo">Seleccionar Modo</string>
-    <string name="subtitle_seleccionar_modo">Tocá un modo para enviarlo al sistema</string>
-    <string name="modo_actual_prefix">Modo actual: %s</string>
-    <string name="modo_desconocido">—</string>
-
-    <string name="toast_desconectando">Desconectando...</string>
-    <string name="error_broker_empty">Ingresá la URL del broker</string>
-    <string name="error_port_invalid">Puerto inválido</string>
-    <string name="status_connecting">Conectando...</string>
-    <string name="toast_connected_to">Conectado a %s</string>
-    <string name="toast_error_prefix">Error: %s</string>
-    <string name="error_not_connected">No estás conectado al MQTT</string>
-    <string name="toast_modo_enviado">Modo enviado: %s</string>
-
-    <string name="sensor_no_acelerometro">Este dispositivo no tiene acelerómetro</string>
-    <string name="sensor_agitacion_detectada">¡Agitación detectada!</string>
-    <string name="sensor_alarma_apagada">Alarma apagada</string>
-    <string name="error_no_mqtt">No estás conectado al MQTT</string>
-
     <string name="label_frio">FRÍO</string>
     <string name="label_caliente">CALIENTE</string>
-    <string name="mode_format">MODO %s</string>
     <string name="toast_enviado_format">Enviado %1$s: %2$d°C</string>
+    <string name="toast_connected_to">Vínculo exitoso con %s</string>
+    <string name="toast_desconectando">Finalizando sesión...</string>
+    <string name="status_connecting">Sincronizando...</string>
+    <string name="error_broker_empty">La dirección es obligatoria</string>
+    <string name="error_port_invalid">Puerto no válido</string>
+    <string name="toast_error_prefix">Falla de sistema: %s</string>
+    <string name="error_not_connected">Sin conexión activa</string>
+    <string name="toast_modo_enviado">Perfil actualizado: %s</string>
+    <string name="sensor_no_acelerometro">Hardware de sensor no detectado</string>
+    <string name="sensor_agitacion_detectada">¡Evento detectado!</string>
+    <string name="sensor_alarma_apagada">Comando de apagado enviado</string>
+    <string name="error_no_mqtt">Error: Broker inaccesible</string>
+
+    <string name="error_ip_required">La IP es requerida</string>
+    <string name="error_http_code">Error de servidor: %d</string>
+    <string name="error_network">Error de red: %s</string>
+    <string name="no_data_available">No hay datos disponibles</string>
+    <string name="status_no_data">Sin registros</string>
+    <string name="status_syncing">Sincronizando...</string>
 </resources>

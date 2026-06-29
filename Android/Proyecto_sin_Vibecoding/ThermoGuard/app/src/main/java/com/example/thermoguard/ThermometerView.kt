@@ -7,198 +7,70 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.core.content.ContextCompat
 
 /**
- * Termómetro interactivo con RANGO acotado por modo.
- *
- *  • La escala visual siempre es minTemp..maxTemp (0..50).
- *  • El usuario solo puede moverse dentro de [rangeMin, rangeMax] (el modo activo).
+ * VISTA: ThermometerView
+ * DESCRIPCIÓN: Componente gráfico para visualizar temperatura de forma no interactiva.
  */
-class ThermometerView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+class ThermometerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, def: Int = 0) : View(context, attrs, def) {
 
-    // Escala visual completa
-    val minTemp = 0f
-    val maxTemp = 50f
+    private val min = Constants.FRIO_MIN
+    private val max = Constants.CALIENTE_MAX
+    private var currentT = 0f
+    private var color = ContextCompat.getColor(context, R.color.primary)
+    private var anim: ValueAnimator? = null
 
-    // Rango permitido del modo activo
-    private var rangeMin = 0f
-    private var rangeMax = 50f
+    private val pTrack = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.thermometer_track) }
+    private val pMerc = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val pGlass = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(30, 255, 255, 255) }
+    private val pTick = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.thermometer_tick); strokeWidth = 3f }
+    private val pLabel = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.thermometer_label) }
+    private val pKnob = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.deep_ocean_text) }
+    private val pRing = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = 6f }
 
-    private var temperature = 25f
-    private var displayed = 25f
-
-    private var accentColor = ContextCompat.getColor(context, R.color.thermometer_frio)
-
-    private var animator: ValueAnimator? = null
-
-    /** Se dispara SIEMPRE (animación o gesto). */
-    var onTemperatureChangeListener: ((Float) -> Unit)? = null
-
-    /** Se dispara SOLO cuando el usuario arrastra con el dedo. */
-    var onUserDragListener: ((Float) -> Unit)? = null
-
-    private val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.thermometer_track)
-    }
-    private val bandPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val mercuryPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val glassPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(28, 255, 255, 255)
-
-    }
-    private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.thermometer_tick)
-        strokeWidth = 3f
-    }
-    private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.thermometer_label)
-        textAlign = Paint.Align.LEFT
-    }
-    private val knobPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.deep_ocean_text)
-    }
-    private val knobRingPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE; strokeWidth = 7f
-    }
-
-    init {
-        if (isInEditMode) { temperature = 25f; displayed = 25f }
-    }
-
-    private fun ratioOf(t: Float) = (t - minTemp) / (maxTemp - minTemp)
-
-    fun currentColor(): Int = accentColor
-
-    fun getTemperature(): Float = temperature
-
-    fun setMode(min: Float, max: Float, initial: Float, color: Int, animate: Boolean = true) {
-        rangeMin = min
-        rangeMax = max
-        accentColor = color
-        setTemperature(initial, animate)
-    }
-
-    fun setTemperature(temp: Float, animate: Boolean = true) {
-        val target = temp.coerceIn(rangeMin, rangeMax)
-        temperature = target
-        if (!animate) {
-            displayed = target
-            onTemperatureChangeListener?.invoke(displayed)
-            invalidate()
-            return
-        }
-        animator?.cancel()
-        animator = ValueAnimator.ofFloat(displayed, target).apply {
-            duration = 500
+    /** Actualiza la temperatura mostrada con una animación suave. */
+    fun updateData(t: Float, c: Int) {
+        this.color = c
+        val target = t.coerceIn(min, max)
+        anim?.cancel()
+        anim = ValueAnimator.ofFloat(currentT, target).apply {
+            duration = 600
             interpolator = DecelerateInterpolator()
-            addUpdateListener {
-                displayed = it.animatedValue as Float
-                onTemperatureChangeListener?.invoke(displayed)
-                invalidate()
-            }
+            addUpdateListener { currentT = it.animatedValue as Float; invalidate() }
             start()
         }
     }
 
-    fun playIntro(to: Float = temperature) {
-        displayed = rangeMin
-        invalidate()
-        post { setTemperature(to, animate = true) }
-    }
-
-    private var tubeTop = 0f
-    private var tubeBottom = 0f
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val w = width.toFloat()
-        val h = height.toFloat()
+        val w = width.toFloat(); val h = height.toFloat()
         if (w == 0f || h == 0f) return
 
-        val tubeW = w * 0.16f
-        val bulbR = tubeW * 1.30f
-        val cx = w * 0.46f
-        // Margen arriba = radio del tope redondeado + aire
-        tubeTop = h * 0.04f + tubeW / 2 + 6f
-        // El bulbo entero (centro + radio) entra antes del borde inferior
-        val bulbCy = h - bulbR - 8f
-        tubeBottom = bulbCy - bulbR * 0.55f
+        val tw = w * 0.15f; val br = tw * 1.3f; val cx = w * 0.45f
+        val top = h * 0.05f + tw/2; val bcy = h - br - 10f; val bot = bcy - br * 0.5f; val uh = bot - top
 
-        val left = cx - tubeW / 2
-        val right = cx + tubeW / 2
-        val usable = tubeBottom - tubeTop
+        canvas.drawRoundRect(RectF(cx - tw/2, top - tw/2, cx + tw/2, bot), tw/2, tw/2, pTrack)
+        canvas.drawCircle(cx, bcy, br, pTrack)
 
-        // Riel
-        val track = RectF(left, tubeTop - tubeW / 2, right, tubeBottom)
-        canvas.drawRoundRect(track, tubeW / 2, tubeW / 2, trackPaint)
-        canvas.drawCircle(cx, bulbCy, bulbR, trackPaint)
+        pMerc.color = color
+        val mt = bot - ((currentT - min) / (max - min)) * uh
+        canvas.drawRoundRect(RectF(cx - tw/2 + (tw * 0.2f), mt, cx + tw/2 - (tw * 0.2f), bot), tw/2, tw/2, pMerc)
+        canvas.drawCircle(cx, bcy, br * 0.8f, pMerc)
 
-        // Zona permitida
-        bandPaint.color = (accentColor and 0x00FFFFFF) or 0x33000000
-        val yBandTop = tubeBottom - ratioOf(rangeMax) * usable
-        val yBandBot = tubeBottom - ratioOf(rangeMin) * usable
-        canvas.drawRoundRect(RectF(left, yBandTop, right, yBandBot), tubeW / 2, tubeW / 2, bandPaint)
-
-        // Mercurio
-        mercuryPaint.color = accentColor
-        val mercTop = tubeBottom - ratioOf(displayed) * usable
-        val inset = tubeW * 0.20f
-        val mLeft = left + inset
-        val mRight = right - inset
-        val mW = mRight - mLeft
-        if (mercTop < tubeBottom - mW / 2) {
-            canvas.drawRoundRect(RectF(mLeft, mercTop, mRight, tubeBottom), mW / 2, mW / 2, mercuryPaint)
-        }
-        canvas.drawCircle(cx, bulbCy, bulbR * 0.80f, mercuryPaint)
-
-        // Reflejo
-        val glass = RectF(left + tubeW * 0.20f, tubeTop, left + tubeW * 0.36f, tubeBottom - tubeW)
-        canvas.drawRoundRect(glass, tubeW * 0.1f, tubeW * 0.1f, glassPaint)
-
-        // Escala
-        labelPaint.textSize = h * 0.030f
-        var t = minTemp.toInt()
-        while (t <= maxTemp.toInt()) {
-            val ty = tubeBottom - ratioOf(t.toFloat()) * usable
-            canvas.drawLine(right + tubeW * 0.55f, ty, right + tubeW * 0.95f, ty, tickPaint)
-            canvas.drawText("$t°", right + tubeW * 1.15f, ty + labelPaint.textSize * 0.35f, labelPaint)
-            t += 10
+        canvas.drawRoundRect(RectF(cx - tw/4, top, cx - tw/8, bot - 10f), 5f, 5f, pGlass)
+        pLabel.textSize = h * 0.03f
+        for (t in min.toInt()..max.toInt() step 10) {
+            val ty = bot - ((t - min) / (max - min)) * uh
+            canvas.drawLine(cx + tw * 0.6f, ty, cx + tw, ty, pTick)
+            canvas.drawText("$t°", cx + tw * 1.2f, ty + pLabel.textSize * 0.3f, pLabel)
         }
 
-        // Perilla (clamp: nunca sale del tubo por arriba)
-        val knobR = tubeW * 0.36f
-        val knobY = mercTop.coerceIn(tubeTop + knobR * 0.2f, tubeBottom)
-        knobRingPaint.color = accentColor
-        canvas.drawCircle(cx, knobY, knobR, knobPaint)
-        canvas.drawCircle(cx, knobY, knobR, knobRingPaint)
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                parent?.requestDisallowInterceptTouchEvent(true)
-                val usable = tubeBottom - tubeTop
-                if (usable <= 0f) return true
-                val y = event.y.coerceIn(tubeTop, tubeBottom)
-                val r = (tubeBottom - y) / usable
-                val rawTemp = minTemp + r * (maxTemp - minTemp)
-                animator?.cancel()
-                temperature = rawTemp.coerceIn(rangeMin, rangeMax)
-                displayed = temperature
-                onTemperatureChangeListener?.invoke(displayed)
-                onUserDragListener?.invoke(displayed)
-                invalidate()
-                return true
-            }
-        }
-        return super.onTouchEvent(event)
+        pRing.color = color
+        val ky = mt.coerceIn(top, bot)
+        canvas.drawCircle(cx, ky, tw * 0.35f, pKnob)
+        canvas.drawCircle(cx, ky, tw * 0.35f, pRing)
     }
 }

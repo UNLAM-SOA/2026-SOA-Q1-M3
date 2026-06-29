@@ -7,43 +7,28 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 
 /**
- * Pantalla de MODO: 3 botones (BAJO / MEDIO / ALTO).
- * Al tocar uno se publica el estado al ESP32 por MQTT (sin temperatura).
+ * ACTIVIDAD: ModoActivity
+ * DESCRIPCIÓN: Permite configurar perfiles de temperatura mediante comandos MQTT.
  */
 class ModoActivity : AppCompatActivity() {
-
-    private val TOPIC_MODO = Constants.TOPIC_SET_MODO
-
-    private lateinit var btnBack: MaterialButton
-    private lateinit var tvModoActual: TextView
-    private lateinit var btnBajo: MaterialButton
-    private lateinit var btnMedio: MaterialButton
-    private lateinit var btnAlto: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modo)
 
-        btnBack      = findViewById(R.id.btnBack)
-        tvModoActual = findViewById(R.id.tvModoActual)
-        btnBajo      = findViewById(R.id.btnBajo)
-        btnMedio     = findViewById(R.id.btnMedio)
-        btnAlto      = findViewById(R.id.btnAlto)
+        val tvStatus = findViewById<TextView>(R.id.tvModoActual)
 
-        btnBajo.setOnClickListener  { enviarModo(Constants.MSG_MODO_BAJO, getString(R.string.preset_bajo)) }
-        btnMedio.setOnClickListener { enviarModo(Constants.MSG_MODO_MEDIO, getString(R.string.preset_medio)) }
-        btnAlto.setOnClickListener  { enviarModo(Constants.MSG_MODO_ALTO, getString(R.string.preset_alto)) }
-
-        btnBack.setOnClickListener { finish() }
+        findViewById<MaterialButton>(R.id.btnBajo).setOnClickListener  { dispatch(Constants.MSG_MODO_BAJO, getString(R.string.preset_bajo), tvStatus) }
+        findViewById<MaterialButton>(R.id.btnMedio).setOnClickListener { dispatch(Constants.MSG_MODO_MEDIO, getString(R.string.preset_medio), tvStatus) }
+        findViewById<MaterialButton>(R.id.btnAlto).setOnClickListener  { dispatch(Constants.MSG_MODO_ALTO, getString(R.string.preset_alto), tvStatus) }
+        findViewById<MaterialButton>(R.id.btnBack).setOnClickListener { finish() }
     }
 
-    private fun enviarModo(payload: String, label: String) {
-        if (!MqttManager.isConnected()) {
-            Toast.makeText(this, getString(R.string.error_not_connected), Toast.LENGTH_SHORT).show()
-            return
-        }
-        MqttManager.mqttPublish(TOPIC_MODO, payload, 1)
-        tvModoActual.text = getString(R.string.modo_actual_prefix, label)
+    /** Envía el payload MQTT y actualiza la etiqueta de estado. */
+    private fun dispatch(msg: String, label: String, tv: TextView) {
+        if (!MqttManager.isConnected()) return
+        MqttManager.mqttPublish(Constants.TOPIC_SET_MODO, msg, 1)
+        tv.text = getString(R.string.modo_actual_prefix, label)
         Toast.makeText(this, getString(R.string.toast_modo_enviado, label), Toast.LENGTH_SHORT).show()
     }
 }

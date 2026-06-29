@@ -5,25 +5,23 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 
+/**
+ * ACTIVIDAD: BotonActivity
+ * DESCRIPCIÓN: Accionamiento manual para encendido de actuadores remotos.
+ */
 class BotonActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_boton)
 
-        val btnBack = findViewById<MaterialButton>(R.id.btnBack)
-        val btnEncender = findViewById<MaterialButton>(R.id.btnEncender)
+        findViewById<MaterialButton>(R.id.btnBack).setOnClickListener { finish() }
 
-        btnBack.setOnClickListener { finish() }
-
-        btnEncender.setOnClickListener {
-            if (!MqttManager.isConnected()) {
-                Toast.makeText(this, getString(R.string.error_not_connected), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        findViewById<MaterialButton>(R.id.btnEncender).setOnClickListener {
+            if (MqttManager.isConnected()) {
+                MqttManager.mqttPublish(Constants.TOPIC_COMANDO_ALARMA, Constants.MSG_ALARMA_ON, 1)
+                Toast.makeText(this, getString(R.string.toast_alarma_encendida), Toast.LENGTH_SHORT).show()
             }
-
-            MqttManager.mqttPublish(Constants.TOPIC_COMANDO_ALARMA, Constants.MSG_ALARMA_ON, 1)
-            Toast.makeText(this, getString(R.string.toast_alarma_encendida), Toast.LENGTH_SHORT).show()
         }
     }
 }

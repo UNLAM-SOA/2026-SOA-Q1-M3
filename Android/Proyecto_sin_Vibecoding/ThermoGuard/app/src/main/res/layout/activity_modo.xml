@@ -50,7 +50,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Botones grandes -->
+    <!-- Botones de Perfil -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBajo"
         android:layout_width="0dp"
@@ -108,6 +108,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Modo actual: BAJO" />
+        tools:text="Perfil activo: BAJO" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
