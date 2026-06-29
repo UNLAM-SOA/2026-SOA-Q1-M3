@@ -2,6 +2,7 @@ package com.example.thermoguard
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -58,6 +59,15 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     MqttManager.mqttSubscribe(Constants.TOPIC_SENSOR_TEMP, 0)
                     MqttManager.mqttSubscribe(Constants.TOPIC_SENSOR_ESTADO, 1)
+                    
+                    // Iniciar el servicio persistente
+                    val serviceIntent = Intent(this, MqttService::class.java)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(serviceIntent)
+                    } else {
+                        startService(serviceIntent)
+                    }
+
                     startActivity(Intent(this, ConfigActivity::class.java))
                 }
             }, { err ->

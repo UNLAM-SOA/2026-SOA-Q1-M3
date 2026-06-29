@@ -14,7 +14,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
@@ -28,7 +27,7 @@ class ConfigActivity : AppCompatActivity() {
 
     private lateinit var tvStatusMqtt: TextView
     private lateinit var tvStatusHardware: TextView
-    private var ivStatusHardware: ImageView? = null   // nullable: no crashea si falta el id
+    private var ivStatusHardware: ImageView? = null
 
     private val channelId = "ALARM_CHANNEL"
 
@@ -66,7 +65,7 @@ class ConfigActivity : AppCompatActivity() {
         val iconRes: Int
 
         when (status) {
-            Constants.STATE_ALARMA -> {
+            "ALERTA", "ALARMA" -> {
                 desc = getString(R.string.status_hardware_alarm)
                 colorRes = R.color.status_red
                 iconRes = R.drawable.alarm_bell_icon_icons_com_68596
@@ -90,11 +89,9 @@ class ConfigActivity : AppCompatActivity() {
         }
 
         runOnUiThread {
-            // Texto (esto ya funcionaba, lo dejo como respaldo visible)
             tvStatusHardware.text = desc
             tvStatusHardware.setTextColor(ContextCompat.getColor(this, colorRes))
 
-            // Icono
             ivStatusHardware?.apply {
                 setImageDrawable(ContextCompat.getDrawable(this@ConfigActivity, iconRes))
                 setColorFilter(ContextCompat.getColor(this@ConfigActivity, colorRes))
@@ -108,21 +105,9 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     /**
-     * Dispara la notificación y la vibración.
+     * Dispara la vibración. La notificación ahora la maneja de forma centralizada el MqttService.
      */
     private fun triggerAlarmActions() {
-        // 1. Notificación
-        val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.alarm_bell_icon_icons_com_68596)
-            .setContentTitle(getString(R.string.status_hardware_alarm))
-            .setContentText(getString(R.string.notification_alarm_content))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1001, builder.build())
-
-        // 2. Vibración
         val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -155,19 +140,25 @@ class ConfigActivity : AppCompatActivity() {
         }
     }
 
+    private val mqttListener: (String, String) -> Unit = { topic, msg ->
+        if (topic == Constants.TOPIC_SENSOR_ESTADO) {
+            val limpio = msg.trim()
+                .removeSurrounding("\"")
+                .trim()
+                .uppercase()
+            updateHardwareStatus(limpio)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         syncMqttStatus()
+        MqttManager.addListener(mqttListener)
+    }
 
-        MqttManager.onMessage = { topic, msg ->
-            if (topic == Constants.TOPIC_SENSOR_ESTADO) {
-                val limpio = msg.trim()
-                    .removeSurrounding("\"")   
-                    .trim()
-                    .uppercase()
-                updateHardwareStatus(limpio)
-            }
-        }
+    override fun onPause() {
+        super.onPause()
+        MqttManager.removeListener(mqttListener)
     }
 
     private fun syncMqttStatus() {

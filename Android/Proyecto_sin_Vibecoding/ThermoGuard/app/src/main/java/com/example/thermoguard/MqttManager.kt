@@ -17,8 +17,16 @@ object MqttManager {
     private const val TAG = "MQTT_MANAGER"
     private var mqttClient: MqttClient? = null
 
-    /** Listener de mensajes entrantes inyectado por las actividades. */
-    var onMessage: ((String, String) -> Unit)? = null
+    /** Lista de listeners para permitir múltiples suscriptores (Service y Activities). */
+    private val listeners = mutableListOf<(String, String) -> Unit>()
+
+    fun addListener(callback: (String, String) -> Unit) {
+        synchronized(listeners) { listeners.add(callback) }
+    }
+
+    fun removeListener(callback: (String, String) -> Unit) {
+        synchronized(listeners) { listeners.remove(callback) }
+    }
 
     /**
      * Conexión asíncrona al broker.
@@ -29,7 +37,12 @@ object MqttManager {
                 mqttClient = MqttClient("tcp://$broker:$port", MqttClient.generateClientId(), MemoryPersistence())
                 mqttClient?.setCallback(object : MqttCallback {
                     override fun connectionLost(c: Throwable?) { Log.e(TAG, "Vínculo perdido") }
-                    override fun messageArrived(t: String, m: MqttMessage) { onMessage?.invoke(t, String(m.payload)) }
+                    override fun messageArrived(t: String, m: MqttMessage) {
+                        val payload = String(m.payload)
+                        synchronized(listeners) {
+                            listeners.forEach { it.invoke(t, payload) }
+                        }
+                    }
                     override fun deliveryComplete(tk: IMqttDeliveryToken?) {}
                 })
                 mqttClient?.connect(MqttConnectOptions().apply { isCleanSession = true })
