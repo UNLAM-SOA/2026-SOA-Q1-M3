@@ -1,0 +1,68 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "${BIND_IP:-0.0.0.0}:1883:1883"
+      - "${BIND_IP:-0.0.0.0}:9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_iot
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-iot}
+      MYSQL_USER: ${MYSQL_USER:-iotuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-iotpass}
+    ports:
+      - "${BIND_IP:-0.0.0.0}:3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  node-red:
+    build:
+      context: ./node-red
+    container_name: node_red_iot
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    environment:
+      TZ: ${TZ:-America/Argentina/Buenos_Aires}
+      NODE_RED_ENABLE_PROJECTS: "false"
+      NODE_RED_CREDENTIAL_SECRET: ${NODE_RED_CREDENTIAL_SECRET:-grupoM3-soa-shared-secret}
+    ports:
+      - "${BIND_IP:-0.0.0.0}:1880:1880"
+    volumes:
+      - ./node-red/data:/data
+
+  phpmyadmin:
+    image: phpmyadmin:5-apache
+    container_name: phpmyadmin_iot
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ABSOLUTE_URI: http://localhost:${PHPMYADMIN_PORT:-8080}/
+    ports:
+      - "${BIND_IP:-0.0.0.0}:${PHPMYADMIN_PORT:-8080}:80"
+
+volumes:
+  mysql_data:
