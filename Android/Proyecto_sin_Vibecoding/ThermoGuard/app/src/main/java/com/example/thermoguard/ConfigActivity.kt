@@ -1,6 +1,5 @@
 package com.example.thermoguard
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,13 +28,10 @@ class ConfigActivity : AppCompatActivity() {
     private lateinit var tvStatusHardware: TextView
     private var ivStatusHardware: ImageView? = null
 
-    private val channelId = "ALARM_CHANNEL"
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_config)
 
-        createNotificationChannel()
         checkNotificationPermission()
 
         tvStatusMqtt = findViewById(R.id.tvEstado)
@@ -114,20 +110,6 @@ class ConfigActivity : AppCompatActivity() {
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(1000)
-        }
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.notification_channel_name)
-            val descriptionText = getString(R.string.notification_channel_desc)
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(channelId, name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
         }
     }
 
