@@ -99,15 +99,14 @@ bool mostrarTemp = false;
 
 // ===================== CREDENCIALES WIFI Y MQTT =====================
 
-const char* ssid = "iPhone de Maximo";          // REEMPLAZAR CON TU WIFI
-const char* password = "maxirojo";    // REEMPLAZAR CON TU CLAVE
-const char* mqtt_server = "172.20.10.8"; // Broker público de prueba (puedes usar otro)
+const char* ssid = "iPhone de Maximo";
+const char* password = "maxirojo";
+const char* mqtt_server = "172.20.10.8";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 // ===================== TOPICS MQTT =====================
-// Deben coincidir EXACTAMENTE con los definidos en la app Android
 
 const char* topic_set_frio     = "grupoM3/set/tempFrio";
 const char* topic_set_medio    = "grupoM3/set/tempMedio";
@@ -117,8 +116,6 @@ const char* topic_set_modo     = "grupoM3/set/modo";
 const char* topic_pub_temp     = "grupoM3/sensor/temperatura";
 const char* topic_pub_estado   = "grupoM3/sensor/estado";
 
-// CORREGIDO: antes era "grupoM3/comandos" (con "s") y no coincidia con
-// TOPIC_COMANDO_ALARMA = "grupoM3/comando" del lado Android.
 const char* topic_sub_cmd      = "grupoM3/comando";
 
 // ===================== CONFIGURACIONES =====================
@@ -378,7 +375,6 @@ const char* estadoToString(States e)
 }
 
 // Callback: se ejecuta cuando llega un mensaje MQTT desde la APP
-// Ahora discrimina por topico, no solo por payload.
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
   String mensaje = "";
   for (unsigned int i = 0; i < length; i++) {
@@ -405,7 +401,6 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     }
   }
   // ---- Forzar modo (equivalente a mover el potenciometro) ----
-  // Strings confirmados desde Constants.kt: MSG_MODO_BAJO/MEDIO/ALTO
   else if (topicStr == topic_set_modo)
   {
     Event evt;
@@ -743,7 +738,7 @@ void setup()
   xTaskCreate(taskTimer, "Timer", 2048, NULL, 1, NULL);
   xTaskCreate(taskPotenciometro, "Pot", 2048, NULL, 1, NULL);
 
-  // TAREA WIFI/MQTT (Requiere más stack por las conexiones de red)
+  // TAREA WIFI/MQTT
   xTaskCreate(taskMQTT, "MQTT", 4096, NULL, 1, NULL);
 }
 
