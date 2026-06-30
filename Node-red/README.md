@@ -3,14 +3,11 @@
 Arquitectura basada en tu imagen:
 - ESP32 publica telemetria en MQTT: `grupoM3/sensor/temperatura`
 - Node-RED toma ese dato y lo guarda en MySQL
-- App movil envia comando por API REST a Node-RED
-- Node-RED publica comando por MQTT en `grupoM3/comandos`
 - API REST permite consultar historial en MySQL
 
 Nota de compatibilidad con el firmware actual del ESP32:
 - El ESP32 se conecta a tu broker local `192.168.0.11:1883` (Mosquitto en Docker).
-- Node-RED usa ese mismo broker local para recibir telemetria y enviar comandos.
-- Los comandos MQTT que entiende el ESP32 son texto plano: `ENCENDER` y `APAGAR`.
+- Node-RED usa ese mismo broker local para recibir telemetria.
 
 ## 1) Puertos y acceso local
 
@@ -46,62 +43,9 @@ docker compose ps
 
 Node-RED expone:
 
-- POST `http://TU_PC:1880/api/comando`
-
-Body JSON ejemplo:
-
-```json
-{
-  "device_id": "esp32-01",
-  "comando": "ENCENDER"
-}
-```
-
 - GET `http://TU_PC:1880/api/historial?device_id=esp32-01&limit=50`
 
 ### 3.1) Ejemplos para la app (Android/iOS)
-
-#### POST comando (encender)
-
-Request:
-
-```http
-POST /api/comando HTTP/1.1
-Host: 192.168.0.11:1880
-Content-Type: application/json
-
-{"device_id":"esp32-01","comando":"ENCENDER"}
-```
-
-Response esperada:
-
-```json
-{
-  "ok": true,
-  "enviado": true,
-  "device_id": "esp32-01",
-  "comando": "ENCENDER"
-}
-```
-
-#### POST comando (apagar)
-
-Ejemplo:
-
-```json
-{"device_id":"esp32-01","comando":"APAGAR"}
-```
-
-Response esperada:
-
-```json
-{
-  "ok": true,
-  "enviado": true,
-  "device_id": "esp32-01",
-  "comando": "APAGAR"
-}
-```
 
 #### GET historial
 
@@ -130,11 +74,6 @@ Response esperada:
 }
 ```
 
-#### Errores comunes
-
-- Si `comando` viene vacio, responde `400`.
-- Si `comando` no es `ENCENDER` o `APAGAR`, responde `400`.
-
 ## 3.2) Ver base de datos en navegador (phpMyAdmin)
 
 - URL: `http://TU_PC:8080`
@@ -155,14 +94,6 @@ Si el ESP32 envia solo un numero, Node-RED guarda `device_id = esp32-01` por def
 
 ## 5) Pruebas rapidas desde PC
 
-### Enviar comando desde API:
-
-```bash
-curl -X POST http://localhost:1880/api/comando \
-  -H "Content-Type: application/json" \
-  -d "{\"device_id\":\"esp32-01\",\"comando\":\"ENCENDER\"}"
-```
-
 ### Consultar historial:
 
 ```bash
@@ -170,13 +101,6 @@ curl "http://localhost:1880/api/historial?device_id=esp32-01&limit=10"
 ```
 
 ### PowerShell
-
-Enviar comando:
-
-```powershell
-$body = @{ device_id = 'esp32-01'; comando = 'ENCENDER' } | ConvertTo-Json -Compress
-Invoke-RestMethod -Method Post -Uri "http://localhost:1880/api/comando" -ContentType "application/json" -Body $body
-```
 
 Consultar historial:
 
@@ -189,7 +113,6 @@ Invoke-RestMethod -Method Get -Uri "http://localhost:1880/api/historial?device_i
 - Broker MQTT: IP local de tu PC
 - Puerto MQTT: `1883`
 - Topic publish: `grupoM3/sensor/temperatura`
-- Topic subscribe: `grupoM3/comandos`
 
 ## 7) Firewall en Windows
 
